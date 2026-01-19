@@ -62,6 +62,14 @@ class TorchrunInferenceWorker:
             task_data["return_result_tensor"] = False
             task_data["negative_prompt"] = task_data.get("negative_prompt", "")
 
+            lora_path = task_data.get("lora_path")
+            if lora_path:
+                lora_strength = task_data.get("lora_strength", 1.0)
+                if hasattr(self.runner, "model") and hasattr(self.runner.model, "set_lora"):
+                    self.runner.model.set_lora(lora_path, lora_strength)
+                else:
+                    logger.warning("Current model does not support hot LoRA; 'lora_path' will be ignored.")
+
             target_fps = task_data.pop("target_fps", None)
             if target_fps is not None:
                 vfi_cfg = self.runner.config.get("video_frame_interpolation")
