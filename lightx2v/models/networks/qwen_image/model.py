@@ -68,7 +68,13 @@ class QwenImageTransformerModel:
         self.pre_weight.register_lora(lora_weight, strength)
         self.transformer_weights.register_lora(lora_weight, strength)
         self.post_weight.register_lora(lora_weight, strength)
-
+        
+    def set_lora(self, lora_path, lora_strength=1.0):
+            self.lora_path = lora_path
+            self.lora_strength = lora_strength
+            if lora_path:
+                self._register_lora(lora_path, lora_strength)
+    
     def set_scheduler(self, scheduler):
         self.scheduler = scheduler
         self.pre_infer.set_scheduler(scheduler)
