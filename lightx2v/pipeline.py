@@ -124,6 +124,7 @@ class LightX2VPipeline:
         lora_path,
         lora_strength=1.0
     ):
+        self.lora_dynamic_apply = True
         if hasattr(self.runner, "model") and hasattr(self.runner.model, "set_lora"):
             self.runner.model.set_lora(lora_path, lora_strength)
         else:
