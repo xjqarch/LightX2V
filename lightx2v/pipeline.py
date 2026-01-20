@@ -121,15 +121,19 @@ class LightX2VPipeline:
 
     def update_generator_hot_lora(
         self,
-        lora_path,
-        lora_strength=1.0
+        lora_configs,
+        lora_dynamic_apply=False
     ):
-        self.lora_dynamic_apply = True
-        if hasattr(self.runner, "model") and hasattr(self.runner.model, "set_lora"):
-            #self.runner.model.unload_lora()
-            self.runner.model.set_lora(lora_path, lora_strength)
+        self.lora_configs = lora_configs
+        self.lora_dynamic_apply = lora_dynamic_apply
+        if self.lora_dynamic_apply:
+            if hasattr(self.runner, "model") and hasattr(self.runner.model, "set_lora"):
+                self.runner.model.unload_lora()
+                self.runner.model.set_lora(lora_path, lora_strength)
+            else:
+                logger.warning("Current model does not support hot LoRA; Operation not valid")
         else:
-            logger.warning("Current model does not support hot LoRA; Operation not valid")
+            self.runner.model = self.runner.load_transformer()
         
     
     def create_generator(
