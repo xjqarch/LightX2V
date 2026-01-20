@@ -126,6 +126,7 @@ class LightX2VPipeline:
     ):
         self.lora_dynamic_apply = True
         if hasattr(self.runner, "model") and hasattr(self.runner.model, "set_lora"):
+            self.runner.model.unload_lora()
             self.runner.model.set_lora(lora_path, lora_strength)
         else:
             logger.warning("Current model does not support hot LoRA; Operation not valid")
