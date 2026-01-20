@@ -32,6 +32,15 @@ class WeightModule:
             if hasattr(parameter, "register_diff"):
                 parameter.register_diff(weight_dict)
 
+    def unregister_diff(self):
+        for _, module in self._modules.items():
+            if hasattr(module, "unregister_diff"):
+                module.unregister_diff()
+
+        for _, parameter in self._parameters.items():
+            if hasattr(parameter, "unregister_diff"):
+                parameter.unregister_diff()    
+
     def register_lora(self, weight_dict, strength):
         for _, module in self._modules.items():
             if hasattr(module, "register_lora"):
@@ -40,6 +49,15 @@ class WeightModule:
         for _, parameter in self._parameters.items():
             if hasattr(parameter, "register_lora"):
                 parameter.register_lora(weight_dict, strength)
+
+    def unregister_lora(self):
+        for _, module in self._modules.items():
+            if hasattr(module, "unregister_lora"):
+                module.unregister_lora()
+
+        for _, parameter in self._parameters.items():
+            if hasattr(parameter, "unregister_lora"):
+                parameter.unregister_lora()
 
     def state_dict(self, destination=None):
         if destination is None:
