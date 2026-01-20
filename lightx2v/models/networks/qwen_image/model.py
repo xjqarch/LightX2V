@@ -79,11 +79,9 @@ class QwenImageTransformerModel:
                 self._register_lora(lora_path, lora_strength)
                 
     def unload_lora(self):
-        if self.pre_weight_origin:
+        if hasattr(self, "pre_weight_origin") and hasattr(self, "transformer_weights_origin") and hasattr(self, "post_weight_origin"):
             self.pre_weight = self.pre_weight_origin
-        if self.transformer_weights_origin:
             self.transformer_weights = self.transformer_weights_origin
-        if self.post_weight_origin:
             self.post_weight = self.post_weight_origin
     
     def set_scheduler(self, scheduler):
