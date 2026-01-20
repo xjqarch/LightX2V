@@ -173,6 +173,13 @@ class MMWeightTemplate(metaclass=ABCMeta):
                 self.has_diff = True
                 self.bias_diff = weight_dict[self.bias_diff_name]
                 logger.debug(f"Register Diff to {self.bias_name}")
+                
+    def unregister_diff(self):
+        self.has_diff = False
+        if hasattr(self, "weight_diff"):
+            del self.weight_diff
+        if hasattr(self, "bias_diff"):
+            del self.bias_diff
 
     def register_lora(self, weight_dict, lora_strength=1):
         if not self.lazy_load or self.create_cuda_buffer or self.create_cpu_buffer:
@@ -187,6 +194,19 @@ class MMWeightTemplate(metaclass=ABCMeta):
                 else:
                     self.lora_scale = torch.tensor(1.0, device=AI_DEVICE)
                 logger.debug(f"Register LoRA to {self.weight_name} with lora_scale={self.lora_scale}")
+
+    def unregister_lora(self):
+        self.has_lora_branch = False
+        if hasattr(self, "lora_down"):
+            del self.lora_down
+        if hasattr(self, "lora_up"):
+            del self.lora_up
+        if hasattr(self, "lora_alpha"):
+            del self.lora_alpha
+        if hasattr(self, "lora_scale"):
+            del self.lora_scale
+        if hasattr(self, "lora_strength"):
+            del self.lora_strength
 
     def state_dict(self, destination=None):
         return state_dict(self, self.base_attrs, self.lora_attrs, destination)
