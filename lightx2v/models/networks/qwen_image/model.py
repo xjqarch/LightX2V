@@ -64,9 +64,6 @@ class QwenImageTransformerModel:
         return tensor_dict
 
     def _register_lora(self, lora_path, strength):
-        #self.pre_weight_origin = self.pre_weight
-        #self.transformer_weights_origin = self.transformer_weights
-        #self.post_weight_origin = self.post_weight
         lora_weight = self._load_lora_file(lora_path)
         self.pre_weight.register_lora(lora_weight, strength)
         self.transformer_weights.register_lora(lora_weight, strength)
@@ -76,14 +73,10 @@ class QwenImageTransformerModel:
         self.unload_lora()
         self.lora_path = lora_path
         self.lora_strength = lora_strength
-        if lora_path:
+        if lora_path != "":
             self._register_lora(lora_path, lora_strength)
                 
     def unload_lora(self):
-        #if hasattr(self, "pre_weight_origin") and hasattr(self, "transformer_weights_origin") and hasattr(self, "post_weight_origin"):
-        #    self.pre_weight = self.pre_weight_origin
-        #    self.transformer_weights = self.transformer_weights_origin
-        #    self.post_weight = self.post_weight_origin
         self.pre_weight.unregister_lora()
         self.transformer_weights.unregister_lora()
         self.post_weight.unregister_lora()

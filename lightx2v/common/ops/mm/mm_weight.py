@@ -183,7 +183,6 @@ class MMWeightTemplate(metaclass=ABCMeta):
 
     def register_lora(self, weight_dict, lora_strength=1):
         if not self.lazy_load or self.create_cuda_buffer or self.create_cpu_buffer:
-            if self.lora_down_name in weight_dict:
                 self.has_lora_branch = True
                 self.lora_down = weight_dict[self.lora_down_name]
                 self.lora_up = weight_dict[self.lora_up_name]
@@ -207,6 +206,7 @@ class MMWeightTemplate(metaclass=ABCMeta):
             del self.lora_scale
         if hasattr(self, "lora_strength"):
             del self.lora_strength
+        logger.debug(f"Unregister LoRA to {self.weight_name}")
 
     def state_dict(self, destination=None):
         return state_dict(self, self.base_attrs, self.lora_attrs, destination)
@@ -284,7 +284,11 @@ class MMWeight(MMWeightTemplate):
             self.weight = None
             self.bias = None
 
+    def _log_inference(self):
+        logger.debug(f"Inference with {self.weight_name} | LoRA Active: {self.has_lora_branch}")
+
     def apply(self, input_tensor):
+        #self._log_inference()
         shape = (input_tensor.shape[0], self.weight.shape[1])
         dtype = input_tensor.dtype
         device = input_tensor.device
