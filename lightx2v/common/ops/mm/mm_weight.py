@@ -183,6 +183,7 @@ class MMWeightTemplate(metaclass=ABCMeta):
 
     def register_lora(self, weight_dict, lora_strength=1):
         if not self.lazy_load or self.create_cuda_buffer or self.create_cpu_buffer:
+            if self.lora_down_name in weight_dict:  
                 self.has_lora_branch = True
                 self.lora_down = weight_dict[self.lora_down_name]
                 self.lora_up = weight_dict[self.lora_up_name]
