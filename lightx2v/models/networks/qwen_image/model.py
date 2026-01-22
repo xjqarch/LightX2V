@@ -29,6 +29,7 @@ class QwenImageTransformerModel:
         self.model_path = os.path.join(config["model_path"], "transformer")
         self.lora_path = lora_path
         self.lora_strength = lora_strength
+        self.lora_dict = {}
         self.cpu_offload = config.get("cpu_offload", False)
         self.offload_granularity = self.config.get("offload_granularity", "block")
         self.device = torch.device("cpu") if self.cpu_offload else torch.device(AI_DEVICE)
@@ -56,8 +57,12 @@ class QwenImageTransformerModel:
         else:
             device = str(self.device)
         if device == "cpu":
-            with safe_open(file_path, framework="pt", device=device) as f:
-                tensor_dict = {key: f.get_tensor(key).to(GET_DTYPE()).pin_memory() for key in f.keys()}
+            if file_path in self.lora_dict.keys():
+                tensor_dict = self.lora_dict[file_path]
+            else:
+                with safe_open(file_path, framework="pt", device=device) as f:
+                    tensor_dict = {key: f.get_tensor(key).to(GET_DTYPE()).pin_memory() for key in f.keys()}
+                self.lora_dict[file_path] = tensor_dict
         else:
             with safe_open(file_path, framework="pt", device=device) as f:
                 tensor_dict = {key: f.get_tensor(key).to(GET_DTYPE()) for key in f.keys()}
