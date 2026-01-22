@@ -57,12 +57,8 @@ class QwenImageTransformerModel:
         else:
             device = str(self.device)
         if device == "cpu":
-            if file_path in self.lora_dict.keys():
-                tensor_dict = self.lora_dict[file_path]
-            else:
-                with safe_open(file_path, framework="pt", device=device) as f:
-                    tensor_dict = {key: f.get_tensor(key).to(GET_DTYPE()).pin_memory() for key in f.keys()}
-                self.lora_dict[file_path] = tensor_dict
+            with safe_open(file_path, framework="pt", device=device) as f:
+                tensor_dict = {key: f.get_tensor(key).to(GET_DTYPE()).pin_memory() for key in f.keys()}
         else:
             with safe_open(file_path, framework="pt", device=device) as f:
                 tensor_dict = {key: f.get_tensor(key).to(GET_DTYPE()) for key in f.keys()}
