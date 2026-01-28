@@ -129,7 +129,8 @@ class MMWeightTemplate(metaclass=ABCMeta):
             self.base_attrs.append((self.bias_name, "bias", False))
 
     def _get_lora_attr_mapping(self):
-        self.lora_down_name, self.lora_up_name, self.lora_alpha_name, self.weight_diff_name, self.bias_diff_name = build_lora_and_diff_names(self.weight_name, self.lora_prefix)
+        #self.lora_down_name, self.lora_up_name, self.lora_alpha_name, self.weight_diff_name, self.bias_diff_name = build_lora_and_diff_names(self.weight_name, self.lora_prefix)
+        self.lora_down_name, self.lora_up_name, self.lora_alpha_name, self.weight_diff_name, self.bias_diff_name = build_lora_and_diff_names_ab(self.weight_name, self.lora_prefix)
         self.lora_attrs = {
             "lora_alpha": "lora_alpha_name",
             "lora_down": "lora_down_name",
@@ -183,6 +184,12 @@ class MMWeightTemplate(metaclass=ABCMeta):
 
     def register_lora(self, weight_dict, lora_strength=1):
         if not self.lazy_load or self.create_cuda_buffer or self.create_cpu_buffer:
+            # from lightx2v.utils.lora_loader import LoRAPatternMatcher
+            # weight_dict2 = dict()
+            # for key in weight_dict:
+            #     lora_format, key_1 = LoRAPatternMatcher().detect_format(key, dict())
+            #     weight_dict2[key_1] = weight_dict[key]
+
             if self.lora_down_name in weight_dict:  
                 self.has_lora_branch = True
                 self.lora_down = weight_dict[self.lora_down_name]
@@ -194,6 +201,8 @@ class MMWeightTemplate(metaclass=ABCMeta):
                 else:
                     self.lora_scale = torch.tensor(1.0, device=AI_DEVICE)
                 logger.debug(f"Register LoRA to {self.weight_name} with lora_scale={self.lora_scale}")
+                logger.debug(f"Register LoRA to {self.lora_down_name} with lora_scale={self.lora_scale}")
+                
 
     def unregister_lora(self):
         self.has_lora_branch = False
