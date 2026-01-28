@@ -61,7 +61,6 @@ class TorchrunInferenceWorker:
             task_data["task"] = self.runner.config["task"]
             task_data["return_result_tensor"] = False
             task_data["negative_prompt"] = task_data.get("negative_prompt", "")
-
             lora_path = task_data.get("lora_path")
             if lora_path:
                 lora_strength = task_data.get("lora_strength", 1.0)

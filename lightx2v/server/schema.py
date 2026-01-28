@@ -47,6 +47,7 @@ class VideoTaskRequest(BaseTaskRequest):
 
 class ImageTaskRequest(BaseTaskRequest):
     aspect_ratio: str = Field("16:9", description="Output aspect ratio")
+    lora_path: Optional[str] = Field("", description="LoRA path")
 
 
 class TaskRequest(BaseTaskRequest):
